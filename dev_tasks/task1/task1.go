@@ -10,6 +10,9 @@ func mytime() {
 
 	time, err := ntp.Time("0.beevik-ntp.pool.ntp.org")
 
+	if err != nil {
+		fmt.Println(err)
+	}
 	fmt.Println(time)
-	fmt.Println(err)
+
 }
