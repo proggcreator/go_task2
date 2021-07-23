@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	u "github.com/proggcreator/go_task2/unpack"
+	u "github.com/proggcreator/go_task2/tree/master/dev_tasks/task2/unpack"
 )
 
 func main() {
