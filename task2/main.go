@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-
-	u "github.com/proggcreator/go_task2/tree/master/dev_tasks/task2/unpack"
 )
 
 func main() {
@@ -15,5 +13,6 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(u.UnpacStr(s))
+
+	fmt.Println(UnpacStr(s))
 }
