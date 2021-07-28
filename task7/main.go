@@ -1,32 +1,49 @@
 package main
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+	"time"
+)
 
-func merge(cs ...<-chan int) <-chan int {
+func or(cs ...<-chan interface{}) <-chan interface{} {
 	var wg sync.WaitGroup
-	out := make(chan int)
-
-	// Start an output goroutine for each input channel in cs.  output
-	// copies values from c to out until c is closed, then calls wg.Done.
-	output := func(c <-chan int) {
+	out := make(chan interface{})          //обьединенный канал
+	output := func(c <-chan interface{}) { //копируем в общий канал
 		for n := range c {
 			out <- n
 		}
 		wg.Done()
 	}
-	wg.Add(len(cs))
+	wg.Add(1) //количество элементов в waitgroup (один)
 	for _, c := range cs {
 		go output(c)
 	}
 
-	// Start a goroutine to close out once all the output goroutines are
-	// done.  This must start after the wg.Add call.
-	go func() {
+	go func() { //отрабатывает после wg.Add, закрываем канал после завершения всех
 		wg.Wait()
 		close(out)
 	}()
 	return out
 }
+
 func main() {
+	sig := func(after time.Duration) <-chan interface{} {
+		c := make(chan interface{})
+		go func() {
+			defer close(c)
+			time.Sleep(after)
+		}()
+		return c
+	}
+
+	start := time.Now()
+	<-or(
+		sig(2*time.Second),
+		sig(1*time.Second),
+		sig(3*time.Second),
+	)
+
+	fmt.Printf("fone after %v\n", time.Since(start))
 
 }
