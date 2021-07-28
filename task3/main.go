@@ -25,7 +25,6 @@ func crmatrix(lst []string) [][]string {
 func StrToInt(s string) (i int) {
 	i, err := strconv.Atoi(s)
 	if err != nil {
-		// handle error
 		fmt.Println(err)
 		os.Exit(2)
 	}
@@ -62,12 +61,10 @@ func main() {
 		//считывам построчно, добавляем в массив
 		strlist = append(strlist, scanner.Text())
 	}
-
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
 	matrix := crmatrix(strlist)
-
 	if *flagn == true {
 		//реализация флага r
 		fmt.Println("d")
