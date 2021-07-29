@@ -36,7 +36,7 @@ func HTTPGet(url string, timeout time.Duration) (content []byte, err error) {
 func main() {
 
 	url := flag.String("url", "https://qna.habr.com/", "url")
-	timeout := flag.Duration("timeout", 5*time.Second, "string1")
+	timeout := flag.Duration("timeout", 1*time.Second, "string1")
 	output_path := flag.String("output", "test.txt", "string2")
 
 	flag.Parse()
