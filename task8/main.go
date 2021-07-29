@@ -4,10 +4,42 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"net"
 	"os"
 	"os/exec"
 	"strings"
 )
+
+func ClientNetcat(arg []string) error {
+	if len(arg) < 1 {
+		return errors.New("Error: few netcat arguments")
+	}
+	// arg задает udp или tcp протокол
+	c, err := net.Dial(arg[0], arg[1]+":"+arg[2])
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer c.Close()
+
+	//отправка данных
+	for {
+		reader := bufio.NewReader(os.Stdin)
+		text, _ := reader.ReadString('\n')
+		//отправка данных
+		fmt.Fprintf(c, text+"\n")
+		//ответ от сервера
+		//message, _ := bufio.NewReader(c).ReadString('\n')
+		//fmt.Print("->: " + message)
+
+		//закрыть клиент
+		if strings.TrimSpace(string(text)) == "STOP" {
+			fmt.Println("TCP client exiting...")
+			return nil
+		}
+	}
+
+}
 
 func main() {
 	reader := bufio.NewReader(os.Stdin)
@@ -18,22 +50,17 @@ func main() {
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
-
 		// обработка ввода
 		if err = execInput(input); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	}
-}
 
-// если команда без оргумента
-var ErrNoPath = errors.New("path required")
+}
 
 func execInput(input string) error {
 	// удаление символа новой строки
 	input = strings.TrimSuffix(input, "\n")
-
-	// разделить на слова
 	args := strings.Split(input, " ")
 
 	// проверка команд
@@ -41,10 +68,19 @@ func execInput(input string) error {
 	case "cd":
 		// пустой путь cd
 		if len(args) < 2 {
-			return ErrNoPath
+			return errors.New("path required")
 		}
 		//реализация cd
 		return os.Chdir(args[1])
+
+		//утилита netcat
+	case "nc":
+		err := ClientNetcat(args[1:])
+		if err != nil {
+			return err
+		}
+		return nil
+
 	case "exit":
 		os.Exit(0)
 	}
@@ -56,6 +92,6 @@ func execInput(input string) error {
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 
-	//выполнить команду
+	//выполнить команду cd/pwd/echo/kill/ps
 	return cmd.Run()
 }
