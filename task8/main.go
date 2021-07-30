@@ -57,7 +57,6 @@ func main() {
 	}
 
 }
-
 func execInput(input string) error {
 	// удаление символа новой строки
 	input = strings.TrimSuffix(input, "\n")
@@ -73,7 +72,7 @@ func execInput(input string) error {
 		//реализация cd
 		return os.Chdir(args[1])
 
-		//утилита netcat
+		//утилита
 	case "nc":
 		err := ClientNetcat(args[1:])
 		if err != nil {
@@ -85,7 +84,6 @@ func execInput(input string) error {
 		os.Exit(0)
 	}
 
-	// команда отдельно
 	cmd := exec.Command(args[0], args[1:]...)
 
 	// поток вывода

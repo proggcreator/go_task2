@@ -1,4 +1,4 @@
-package task1
+package cmd
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"github.com/beevik/ntp"
 )
 
-func mycurrtime() {
+func Mycurrtime() {
 
 	time, err := ntp.Time("0.beevik-ntp.pool.ntp.org")
 
@@ -17,6 +17,7 @@ func mycurrtime() {
 		os.Exit(-1)      //код выхода
 
 	}
+	fmt.Println("Точное время:")
 	fmt.Println(time) ///вывод точного времени
 
 }

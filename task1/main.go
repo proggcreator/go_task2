@@ -1,5 +1,8 @@
 package main
 
+import "mytime/cmd"
+
 func main() {
-	u.mycurrtime()
+
+	cmd.Mycurrtime()
 }
