@@ -1,34 +1,19 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
-	"github.com/proggcreator/go_task2/defhttp/handler"
-	"github.com/sirupsen/logrus"
+	"github.com/proggcreator/go_task2/defhttp"
 )
 
 func main() {
-	logrus.SetFormatter(new(logrus.JSONFormatter)) //формат для логгера json
-	//if err := initConfig(); err != nil {
-	//	logrus.Fatalf("error initializing configs")
-	//}
-	//иерархия зависимостей
-	//services := service.NewService()
-	//handlers := handler.NewHandler(services)
 
-	mux := http.NewServeMux()
-	mux.Handle("/", handler.Homee)
-	//mux.Handle("/create_event/",)
+	router := http.HandlerFunc(defhttp.Serve)
 
-	fmt.Println("Server is listening...")
-	http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", router)
+
+	if err != nil {
+		log.Fatalf("Could not start server: %s\n", err.Error())
+	}
 }
-
-/*
-func initConfig() error {
-	viper.AddConfigPath("configs")
-	viper.SetConfigName("config")
-	return viper.ReadInConfig()
-
-*/
