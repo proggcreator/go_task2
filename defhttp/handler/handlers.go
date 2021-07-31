@@ -2,7 +2,7 @@ package handler
 
 import "fmt"
 
-func home() {
+func Homeeee() {
 	fmt.Println("Heeeeeeeeeeeeeeeeeeloo!")
 
 }

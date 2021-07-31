@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/proggcreator/go_task2/defhttp/handler"
 	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/viper"
@@ -20,7 +19,7 @@ func main() {
 	//services := service.NewService()
 	//handlers := handler.NewHandler(services)
 
-	http.Handle("/", handler.home)
+	http.Handle("/", handler.homeeee)
 	//http.Handle("/about", handler.main)
 
 	fmt.Println("Server is listening...")
