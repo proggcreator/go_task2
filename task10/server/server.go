@@ -19,7 +19,7 @@ func handleConnection(conn net.Conn) {
 			break
 		}
 
-		conn.Write([]byte(fmt.Sprintf("i have received '%s'\n", text)))
+		conn.Write([]byte(fmt.Sprintf("I have received '%s'\n", text)))
 	}
 
 	if err := scanner.Err(); err != nil {
