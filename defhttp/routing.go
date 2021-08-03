@@ -10,15 +10,13 @@ import (
 
 func Serve(w http.ResponseWriter, r *http.Request) {
 	var h http.Handler
-	//var slug string
-	//var id int
-
+	var slug string
 	p := r.URL.Path
 	switch {
 	case match(p, "/"):
 		h = get(home)
-	case match(p, "/create_event"):
-		h = post(create_event)
+	case match(p, "/create_event/([^/]+)", &slug):
+		h = post(apiWidget{slug, 1}.create_event)
 	case match(p, "/update_event"):
 		h = post(update_event)
 	case match(p, "/delete_event"):
@@ -40,7 +38,9 @@ func Serve(w http.ResponseWriter, r *http.Request) {
 // match reports whether path matches ^regex$, and if it matches,
 // assigns any capture groups to the *string or *int vars.
 func match(path, pattern string, vars ...interface{}) bool {
+	//регулярное выражение
 	regex := mustCompileCached(pattern)
+	//поиск списка подстрок
 	matches := regex.FindStringSubmatch(path)
 	if len(matches) <= 0 {
 		return false

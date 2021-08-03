@@ -5,14 +5,26 @@ import (
 	"net/http"
 )
 
-func create_event(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "create_event\n")
+type apiWidget struct {
+	slug string
+	id   int
+}
+
+func (h apiWidget) create_event(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, h.slug)
+	regex := mustCompileCached("user_id=(.*)&date=(.*)")
+	//поиск списка подстрок
+	matches := regex.FindStringSubmatch(h.slug)
+	user_id := matches[1]
+	date := matches[2]
+	fmt.Fprintln(w, user_id)
+	fmt.Fprintln(w, date)
+
 }
 
 func update_event(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "update_event\n")
 }
-
 func delete_event(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "delete_event\n")
 }

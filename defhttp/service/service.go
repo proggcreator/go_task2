@@ -1,15 +1,15 @@
 package service
 
-type MyapiOrder interface {
+type MyCalend interface {
 	Create() error
 }
 
 type Service struct {
-	MyapiOrder
+	MyCalend
 }
 
 func NewService() *Service { //внедрение зависимости
 	return &Service{
-		MyapiOrder: NewMyapiOrderService(),
+		MyCalend: NewMyCalendService(),
 	}
 }
