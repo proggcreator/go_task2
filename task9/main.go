@@ -15,14 +15,16 @@ func HTTPGet(url string, timeout time.Duration) (content []byte, err error) {
 	if err != nil {
 		return
 	}
-
+	//формируем запрос
 	ctx, cancel_func := context.WithTimeout(context.Background(), timeout)
 	request = request.WithContext(ctx)
 
+	//выполнение хапроса
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
+	//закрываем соединение
 	defer response.Body.Close()
 
 	if response.StatusCode != 200 {
@@ -34,17 +36,18 @@ func HTTPGet(url string, timeout time.Duration) (content []byte, err error) {
 }
 
 func main() {
-
-	url := flag.String("url", "https://qna.habr.com/", "url")
-	timeout := flag.Duration("timeout", 1*time.Second, "string1")
+	//флаги со значениями по умолчинию
+	url := flag.String("url", "https://habr.com/", "url")
+	timeout := flag.Duration("timeout", 5*time.Second, "string1")
 	output_path := flag.String("output", "test.txt", "string2")
-
 	flag.Parse()
 
+	//получаем данные
 	content, err := HTTPGet(*url, *timeout)
 	if err != nil {
 		log.Fatalln("HTTPGET: ", err)
 	}
+	//запись в файл
 	err = ioutil.WriteFile(*output_path, content, 0666)
 	if err != nil {
 		log.Fatalln("WriteFile: ", err)

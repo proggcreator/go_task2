@@ -23,10 +23,12 @@ OUTER:
 			if scanner.Err() != nil {
 				fmt.Println(scanner.Err())
 			}
+
 			if !scanner.Scan() {
 				log.Printf("CANNOT SCAN from conn")
 				break OUTER
 			}
+
 			text := scanner.Text()
 			log.Printf("from server: %s", text)
 		}

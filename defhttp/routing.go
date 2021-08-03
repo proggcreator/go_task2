@@ -17,8 +17,18 @@ func Serve(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case match(p, "/"):
 		h = get(home)
-	case match(p, "/contact"):
-		h = get(contact)
+	case match(p, "/create_event"):
+		h = post(create_event)
+	case match(p, "/update_event"):
+		h = post(update_event)
+	case match(p, "/delete_event"):
+		h = post(delete_event)
+	case match(p, "/events_for_day"):
+		h = get(events_for_day)
+	case match(p, "/events_for_week"):
+		h = get(events_for_week)
+	case match(p, "/events_for_month"):
+		h = get(events_for_month)
 
 	default:
 		http.NotFound(w, r)
@@ -94,8 +104,4 @@ func post(h http.HandlerFunc) http.HandlerFunc {
 }
 func home(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "home\n")
-}
-
-func contact(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "contact\n")
 }
