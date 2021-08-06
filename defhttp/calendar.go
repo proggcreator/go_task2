@@ -5,28 +5,39 @@ import (
 	"net/http"
 )
 
+//строка параметров
 type apiWidget struct {
 	slug string
-	id   int
 }
 
 func (h apiWidget) create_event(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, h.slug)
-	regex := mustCompileCached("user_id=(.*)&date=(.*)")
-	//поиск списка подстрок
+	//параметры передаются фиксированно
+	regex := mustCompileCached("user_id=(.*)&date=(.*)&name=(.*)")
+	//формирование списка подстрок
 	matches := regex.FindStringSubmatch(h.slug)
 	user_id := matches[1]
 	date := matches[2]
+	name := matches[3]
 	fmt.Fprintln(w, user_id)
 	fmt.Fprintln(w, date)
+	fmt.Fprintln(w, name)
 
 }
 
-func update_event(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "update_event\n")
+func (h apiWidget) update_event(w http.ResponseWriter, r *http.Request) {
+	regex := mustCompileCached("user_id=(.*)&date=(.*)&name=(.*)")
+	//формирование списка подстрок
+	matches := regex.FindStringSubmatch(h.slug)
+	user_id := matches[1]
+	date := matches[2]
+	name := matches[3]
+	fmt.Fprintln(w, user_id)
+	fmt.Fprintln(w, date)
+	fmt.Fprintln(w, name)
+
 }
 func delete_event(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "delete_event\n")
+	fmt.Fprint(w, "delete_evedelete_eventnt\n")
 }
 
 func events_for_day(w http.ResponseWriter, r *http.Request) {

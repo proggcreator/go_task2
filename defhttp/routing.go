@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
-	"strconv"
 	"sync"
 )
 
@@ -16,9 +15,9 @@ func Serve(w http.ResponseWriter, r *http.Request) {
 	case match(p, "/"):
 		h = get(home)
 	case match(p, "/create_event/([^/]+)", &slug):
-		h = post(apiWidget{slug, 1}.create_event)
-	case match(p, "/update_event"):
-		h = post(update_event)
+		h = post(apiWidget{slug}.create_event)
+	case match(p, "/update_event/([^/]+)"):
+		h = post(apiWidget{slug}.update_event)
 	case match(p, "/delete_event"):
 		h = post(delete_event)
 	case match(p, "/events_for_day"):
@@ -49,12 +48,6 @@ func match(path, pattern string, vars ...interface{}) bool {
 		switch p := vars[i].(type) {
 		case *string:
 			*p = match
-		case *int:
-			n, err := strconv.Atoi(match)
-			if err != nil {
-				return false
-			}
-			*p = n
 		default:
 			panic("vars must be *string or *int")
 		}
