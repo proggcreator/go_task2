@@ -7,25 +7,39 @@ import (
 	"sync"
 )
 
+type Myapi struct {
+	slug    string
+	datamap map[string]Calendar
+}
+
+func NewMyapi() *Myapi {
+	calendar := make(map[string]Calendar)
+	myapi := Myapi{
+		slug:    "",
+		datamap: calendar,
+	}
+	return &myapi
+}
+
 func Serve(w http.ResponseWriter, r *http.Request) {
 	var h http.Handler
-	var slug string
+	mycache := NewMyapi()
+
+	//rep := MyRep{}
 	p := r.URL.Path
 	switch {
-	case match(p, "/"):
-		h = get(home)
-	case match(p, "/create_event/([^/]+)", &slug):
-		h = post(apiWidget{slug}.create_event)
-	case match(p, "/update_event/([^/]+)"):
-		h = post(apiWidget{slug}.update_event)
+	case match(p, "/create_event/+"):
+		h = post(mycache.create_event)
+	case match(p, "/update_event/+"):
+		h = post(mycache.update_event)
 	case match(p, "/delete_event"):
-		h = post(delete_event)
+		h = post(mycache.delete_event)
 	case match(p, "/events_for_day"):
-		h = get(events_for_day)
+		h = get(mycache.events_for_day)
 	case match(p, "/events_for_week"):
-		h = get(events_for_week)
+		h = get(mycache.events_for_week)
 	case match(p, "/events_for_month"):
-		h = get(events_for_month)
+		h = get(mycache.events_for_month)
 
 	default:
 		http.NotFound(w, r)
