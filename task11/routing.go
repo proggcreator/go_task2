@@ -7,23 +7,23 @@ import (
 	"sync"
 )
 
-type Myapi struct {
+type MyContext struct {
 	slug    string
 	datamap map[string]Calendar
 }
 
-func NewMyapi() *Myapi {
+func NewMyContext() *MyContext {
 	calendar := make(map[string]Calendar)
-	myapi := Myapi{
+	ctx := MyContext{
 		slug:    "",
 		datamap: calendar,
 	}
-	return &myapi
+	return &ctx
 }
 
 func Serve(w http.ResponseWriter, r *http.Request) {
 	var h http.Handler
-	mycache := NewMyapi()
+	mycache := NewMyContext()
 
 	//rep := MyRep{}
 	p := r.URL.Path

@@ -16,27 +16,27 @@ type Calendar struct {
 	matches := regex.FindStringSubmatch(str)
 	return matches
 }*/
-func (h *Myapi) create_event(w http.ResponseWriter, r *http.Request) {
+func (c *MyContext) create_event(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("user_id")
 	name := r.URL.Query().Get("name")
 	date := r.URL.Query().Get("date")
-	h.datamap[id] = Calendar{
+	c.datamap[id] = Calendar{
 		data: date,
 		name: name,
 	}
 
-	h.datamap["4"] = Calendar{
+	c.datamap["7"] = Calendar{
 		data: date,
 		name: name,
 	}
-	fmt.Fprintln(w, h.datamap)
+	fmt.Fprintln(w, c.datamap)
 	fmt.Fprintln(w, id)
 	fmt.Fprintln(w, name)
 	fmt.Fprintln(w, date)
 
 }
 
-func (h *Myapi) update_event(w http.ResponseWriter, r *http.Request) {
+func (h *MyContext) update_event(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintln(w, "Мапа")
 	if val, ok := h.datamap["3"]; ok {
@@ -50,16 +50,16 @@ func (h *Myapi) update_event(w http.ResponseWriter, r *http.Request) {
 	//fmt.Fprintln(w, h.mapdata[1])
 
 }
-func (h *Myapi) delete_event(w http.ResponseWriter, r *http.Request) {
+func (h *MyContext) delete_event(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "delete_evedelete_eventnt\n")
 }
 
-func (h *Myapi) events_for_day(w http.ResponseWriter, r *http.Request) {
+func (h *MyContext) events_for_day(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "events_for_day\n")
 }
-func (h *Myapi) events_for_week(w http.ResponseWriter, r *http.Request) {
+func (h *MyContext) events_for_week(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "events_for_week\n")
 }
-func (h *Myapi) events_for_month(w http.ResponseWriter, r *http.Request) {
+func (h *MyContext) events_for_month(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "events_for_month\n")
 }

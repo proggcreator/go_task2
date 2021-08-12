@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/proggcreator/go_task2/defhttp/service"
+	"github.com/proggcreator/go_task2/task11/service"
 )
 
 type Handler struct {
