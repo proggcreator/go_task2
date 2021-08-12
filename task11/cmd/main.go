@@ -4,12 +4,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/proggcreator/go_task2/defhttp"
+	defhttp "github.com/proggcreator/go_task2/task11"
 )
 
 func main() {
 
-	router := http.HandlerFunc(defhttp.Serve)
+	router := http.HandlerFunc(defhttp.ServeHTTP)
 
 	err := http.ListenAndServe(":8080", router)
 

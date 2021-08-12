@@ -9,20 +9,25 @@ import (
 
 type MyContext struct {
 	slug    string
+	id      int
 	datamap map[string]Calendar
+}
+type serverHandler struct {
+	srv *Server
 }
 
 func NewMyContext() *MyContext {
 	calendar := make(map[string]Calendar)
 	ctx := MyContext{
+		id:      0,
 		slug:    "",
 		datamap: calendar,
 	}
 	return &ctx
 }
 
-func Serve(w http.ResponseWriter, r *http.Request) {
-	var h http.Handler
+func (sh serverHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	h := sh.srv.httpServer.Handler
 	mycache := NewMyContext()
 
 	//rep := MyRep{}
@@ -30,8 +35,10 @@ func Serve(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case match(p, "/create_event/+"):
 		h = post(mycache.create_event)
+		fmt.Fprintln(w, mycache)
 	case match(p, "/update_event/+"):
 		h = post(mycache.update_event)
+		fmt.Fprintln(w, mycache)
 	case match(p, "/delete_event"):
 		h = post(mycache.delete_event)
 	case match(p, "/events_for_day"):
@@ -45,6 +52,7 @@ func Serve(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+
 	h.ServeHTTP(w, r)
 }
 

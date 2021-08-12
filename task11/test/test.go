@@ -25,9 +25,9 @@ func (c *cont) check() {
 
 func (c *cont) prnt() {
 
-	c.datamap["x"] = Calendar{name: "drrrrrrrr"}
+	c.datamap["r"] = Calendar{name: "deart"}
+	c.a++
 	fmt.Println("Это")
-	fmt.Println(c)
 }
 
 func main() {

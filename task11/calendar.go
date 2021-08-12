@@ -29,22 +29,20 @@ func (c *MyContext) create_event(w http.ResponseWriter, r *http.Request) {
 		data: date,
 		name: name,
 	}
-	fmt.Fprintln(w, c.datamap)
-	fmt.Fprintln(w, id)
-	fmt.Fprintln(w, name)
-	fmt.Fprintln(w, date)
+	c.id = c.id + 2
+	fmt.Fprintln(w, c)
 
 }
 
-func (h *MyContext) update_event(w http.ResponseWriter, r *http.Request) {
-
+func (c *MyContext) update_event(w http.ResponseWriter, r *http.Request) {
+	c.id = c.id + 1
 	fmt.Fprintln(w, "Мапа")
-	if val, ok := h.datamap["3"]; ok {
+	if val, ok := c.datamap["3"]; ok {
 		fmt.Fprintln(w, val)
 	} else {
 		fmt.Fprintln(w, "Ошибка")
 	}
-	fmt.Fprintln(w, h.datamap)
+	fmt.Fprintln(w, c)
 
 	//fmt.Fprintln(w, h.datamap["3"])
 	//fmt.Fprintln(w, h.mapdata[1])
