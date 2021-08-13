@@ -26,8 +26,8 @@ func NewMyContext() *MyContext {
 	return &ctx
 }
 
-func (sh serverHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	h := sh.srv.httpServer.Handler
+func (serv *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	h := serv.httpServer.Handler
 	mycache := NewMyContext()
 
 	//rep := MyRep{}
