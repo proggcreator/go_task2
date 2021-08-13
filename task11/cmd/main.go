@@ -1,19 +1,18 @@
 package main
 
 import (
+	defhttp "github.com/proggcreator/go_task2/task11"
+	"github.com/spf13/viper"
 	"log"
 	"net/http"
-
-	defhttp "github.com/proggcreator/go_task2/task11"
 )
 
 func main() {
+	router := http.HandlerFunc(defhttp.Server)
 
-	router := http.HandlerFunc(defhttp.ServeHTTP)
-
-	err := http.ListenAndServe(":8080", router)
-
-	if err != nil {
-		log.Fatalf("Could not start server: %s\n", err.Error())
+	srv := new(defhttp.Server)
+	if err := srv.Run(viper.GetString("port"), router); err != nil {
+		log.Fatalf("error occured while running http server: %s", err.Error())
 	}
+
 }
