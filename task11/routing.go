@@ -12,9 +12,6 @@ type MyContext struct {
 	id      int
 	datamap map[string]Calendar
 }
-type serverHandler struct {
-	srv *Server
-}
 
 func NewMyContext() *MyContext {
 	calendar := make(map[string]Calendar)
@@ -26,8 +23,9 @@ func NewMyContext() *MyContext {
 	return &ctx
 }
 
-func (serv *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	h := serv.httpServer.Handler
+func Serve(w http.ResponseWriter, r *http.Request) {
+	var h http.Handler
+
 	mycache := NewMyContext()
 
 	//rep := MyRep{}
