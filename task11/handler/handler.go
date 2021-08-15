@@ -1,15 +1,21 @@
 package handler
 
-import "net/http"
+import (
+	"net/http"
 
-type Handler struct {
-	handl *http.Handler
-	contx *MyContext
+	"github.com/sirupsen/logrus"
+)
+
+type MyStore struct {
+	handl  *http.Handler
+	contx  *MyContext
+	logger *logrus.Logger
 }
 
-func NewHandler() *Handler {
-	return &Handler{
-		handl: new(http.Handler),
-		contx: NewMyContext(),
+func NewStore() *MyStore {
+	return &MyStore{
+		handl:  new(http.Handler),
+		contx:  NewMyContext(),
+		logger: logrus.New(),
 	}
 }

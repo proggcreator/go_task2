@@ -22,29 +22,29 @@ func NewMyContext() *MyContext {
 	return &ctx
 }
 
-func (h Handler) Serve(w http.ResponseWriter, r *http.Request) {
+func (s MyStore) Serve(w http.ResponseWriter, r *http.Request) {
 	p := r.URL.Path
 	switch {
 	case match(p, "/create_event/+"):
-		*h.handl = post(h.create_event)
+		*s.handl = post(s.create_event)
 		fmt.Fprintln(w, "Сощдатьь")
 	case match(p, "/update_event/+"):
-		*h.handl = post(h.update_event)
+		*s.handl = post(s.update_event)
 		fmt.Fprintln(w, "Обновить")
 	case match(p, "/delete_event"):
-		*h.handl = post(h.delete_event)
+		*s.handl = post(s.delete_event)
 	case match(p, "/events_for_day"):
-		*h.handl = get(h.events_for_day)
+		*s.handl = get(s.events_for_day)
 	case match(p, "/events_for_week"):
-		*h.handl = get(h.events_for_week)
+		*s.handl = get(s.events_for_week)
 	case match(p, "/events_for_month"):
-		*h.handl = get(h.events_for_month)
+		*s.handl = get(s.events_for_month)
 
 	default:
 		http.NotFound(w, r)
 		return
 	}
-	x := *h.handl
+	x := *s.handl
 	x.ServeHTTP(w, r)
 }
 

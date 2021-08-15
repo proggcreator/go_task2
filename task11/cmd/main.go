@@ -24,8 +24,8 @@ func main() {
 
 	//handler := http.HandlerFunc(defhttp.Serve)
 	s := new(defhttp.Server)
-	handl := myhand.NewHandler()
-	router := http.HandlerFunc(handl.Serve)
+	stor := myhand.NewStore()
+	router := http.HandlerFunc(stor.Serve)
 
 	if err := s.Run(viper.GetString("port"), router); err != nil {
 		logrus.Fatalf("error occured while running http server: %s", err.Error())
