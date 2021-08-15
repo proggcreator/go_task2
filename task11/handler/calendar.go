@@ -1,4 +1,4 @@
-package defhttp
+package handler
 
 import (
 	"fmt"
@@ -16,48 +16,48 @@ type Calendar struct {
 	matches := regex.FindStringSubmatch(str)
 	return matches
 }*/
-func (c *MyContext) create_event(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) create_event(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Этоо")
 	id := r.URL.Query().Get("user_id")
 	name := r.URL.Query().Get("name")
 	date := r.URL.Query().Get("date")
-	c.datamap[id] = Calendar{
+	h.contx.datamap[id] = Calendar{
 		data: date,
 		name: name,
 	}
 
-	c.datamap["7"] = Calendar{
+	h.contx.datamap["70"] = Calendar{
 		data: date,
 		name: name,
 	}
-	c.id = c.id + 2
-	fmt.Fprintln(w, c)
-
+	h.contx.id = h.contx.id + 2
+	fmt.Fprintln(w, h.contx)
 }
 
-func (c *MyContext) update_event(w http.ResponseWriter, r *http.Request) {
-	c.id = c.id + 1
+func (h *Handler) update_event(w http.ResponseWriter, r *http.Request) {
+	h.contx.id = h.contx.id + 1
 	fmt.Fprintln(w, "Мапа")
-	if val, ok := c.datamap["3"]; ok {
+	if val, ok := h.contx.datamap["3"]; ok {
 		fmt.Fprintln(w, val)
 	} else {
 		fmt.Fprintln(w, "Ошибка")
 	}
-	fmt.Fprintln(w, c)
+	fmt.Fprintln(w, h.contx)
 
 	//fmt.Fprintln(w, h.datamap["3"])
 	//fmt.Fprintln(w, h.mapdata[1])
 
 }
-func (h *MyContext) delete_event(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) delete_event(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "delete_evedelete_eventnt\n")
 }
 
-func (h *MyContext) events_for_day(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) events_for_day(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "events_for_day\n")
 }
-func (h *MyContext) events_for_week(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) events_for_week(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "events_for_week\n")
 }
-func (h *MyContext) events_for_month(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) events_for_month(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "events_for_month\n")
 }
