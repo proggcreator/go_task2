@@ -1,21 +1,19 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"regexp"
 )
 
 type MyContext struct {
-	slug    string
-	id      int
-	datamap map[string]Calendar
+	slug string
+
+	datamap map[int]Calendar
 }
 
 func NewMyContext() *MyContext {
-	calendar := make(map[string]Calendar)
+	calendar := make(map[int]Calendar)
 	ctx := MyContext{
-		id:      0,
 		slug:    "",
 		datamap: calendar,
 	}
@@ -25,20 +23,19 @@ func NewMyContext() *MyContext {
 func (s MyStore) Serve(w http.ResponseWriter, r *http.Request) {
 	p := r.URL.Path
 	switch {
+
 	case match(p, "/create_event/+"):
-		*s.handl = post(s.create_event)
-		fmt.Fprintln(w, "Сощдатьь")
+		*s.handl = s.logRequest(post(s.create_event))
 	case match(p, "/update_event/+"):
-		*s.handl = post(s.update_event)
-		fmt.Fprintln(w, "Обновить")
+		*s.handl = s.logRequest(post(s.update_event))
 	case match(p, "/delete_event"):
-		*s.handl = post(s.delete_event)
+		*s.handl = s.logRequest(post(s.delete_event))
 	case match(p, "/events_for_day"):
-		*s.handl = get(s.events_for_day)
+		*s.handl = s.logRequest(get(s.events_for_day))
 	case match(p, "/events_for_week"):
-		*s.handl = get(s.events_for_week)
+		*s.handl = s.logRequest(get(s.events_for_week))
 	case match(p, "/events_for_month"):
-		*s.handl = get(s.events_for_month)
+		*s.handl = s.logRequest(get(s.events_for_month))
 
 	default:
 		http.NotFound(w, r)
