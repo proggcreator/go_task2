@@ -26,12 +26,9 @@ func main() {
 	s := new(defhttp.Server)
 	stor := myhand.NewStore()
 	router := http.HandlerFunc(stor.Serve)
-
 	if err := s.Run(viper.GetString("port"), router); err != nil {
-		logrus.Fatalf("error occured while running http server: %s", err.Error())
+		stor.logger.Fatalf("error occured while running http server: %s", err.Error())
 	}
+	stor.logger.Infof("Starting server..")
 
-	/*if err != nil {
-		log.Fatalf("Could not start server: %s\n", err.Error())
-	}*/
 }

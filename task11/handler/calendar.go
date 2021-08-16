@@ -59,7 +59,7 @@ func (h *MyStore) create_event(w http.ResponseWriter, r *http.Request) {
 	err, myJson := toJson(idstr, name, date)
 	if err != nil {
 		//error 503
-		logrus.Fatalf("Error 503")
+		h.logger.Fatalf("Error 503")
 		w.WriteHeader(http.StatusServiceUnavailable)
 		return
 
@@ -68,7 +68,7 @@ func (h *MyStore) create_event(w http.ResponseWriter, r *http.Request) {
 	//conver from string type
 	myid, mycalend, err := fromString(idstr, name, date)
 	if err != nil {
-		logrus.Fatalf("Error 400")
+		h.logger.Fatalf("Error 400")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
