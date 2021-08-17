@@ -17,18 +17,21 @@ func initConfig() error {
 }
 
 func main() {
-	logrus.SetFormatter(new(logrus.JSONFormatter)) //формат для логгера json
+	logrus.SetFormatter(new(logrus.JSONFormatter)) //format for logger: json
 	if err := initConfig(); err != nil {
 		logrus.Fatalf("error initializing configs")
+
 	}
 
 	//handler := http.HandlerFunc(defhttp.Serve)
 	s := new(defhttp.Server)
 	stor := myhand.NewStore()
 	router := http.HandlerFunc(stor.Serve)
+
+	stor.Logger.Infof("Server is running...")
 	if err := s.Run(viper.GetString("port"), router); err != nil {
-		stor.logger.Fatalf("error occured while running http server: %s", err.Error())
+		stor.Logger.Fatalf("Error occured while running http server: %s", err.Error())
+
 	}
-	stor.logger.Infof("Starting server..")
 
 }

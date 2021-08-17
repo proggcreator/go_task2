@@ -8,7 +8,7 @@ import (
 
 func (s MyStore) logRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logg := s.logger.WithFields(logrus.Fields{
+		logg := s.Logger.WithFields(logrus.Fields{
 			"remode_addr": r.RemoteAddr,
 		})
 		logg.Infof("Started %s %s", r.Method, r.RequestURI)

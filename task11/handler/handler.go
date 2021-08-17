@@ -7,15 +7,15 @@ import (
 )
 
 type MyStore struct {
-	handl  *http.Handler
-	contx  *MyContext
-	logger *logrus.Logger
+	Handl  *http.Handler
+	Contx  *MyContext
+	Logger *logrus.Logger
 }
 
 func NewStore() *MyStore {
 	return &MyStore{
-		handl:  new(http.Handler),
-		contx:  NewMyContext(),
-		logger: logrus.New(),
+		Handl:  new(http.Handler),
+		Contx:  NewMyContext(),
+		Logger: logrus.New(),
 	}
 }

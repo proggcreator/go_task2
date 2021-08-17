@@ -7,12 +7,12 @@ import (
 
 type MyContext struct {
 	slug string
-
-	datamap map[int]Calendar
+	//slice of structs
+	datamap map[int][]Calendar
 }
 
 func NewMyContext() *MyContext {
-	calendar := make(map[int]Calendar)
+	calendar := make(map[int][]Calendar)
 	ctx := MyContext{
 		slug:    "",
 		datamap: calendar,
@@ -25,23 +25,23 @@ func (s MyStore) Serve(w http.ResponseWriter, r *http.Request) {
 	switch {
 
 	case match(p, "/create_event/+"):
-		*s.handl = s.logRequest(post(s.create_event))
+		*s.Handl = s.logRequest(post(s.create_event))
 	case match(p, "/update_event/+"):
-		*s.handl = s.logRequest(post(s.update_event))
+		*s.Handl = s.logRequest(post(s.update_event))
 	case match(p, "/delete_event"):
-		*s.handl = s.logRequest(post(s.delete_event))
+		*s.Handl = s.logRequest(post(s.delete_event))
 	case match(p, "/events_for_day"):
-		*s.handl = s.logRequest(get(s.events_for_day))
+		*s.Handl = s.logRequest(get(s.events_for_day))
 	case match(p, "/events_for_week"):
-		*s.handl = s.logRequest(get(s.events_for_week))
+		*s.Handl = s.logRequest(get(s.events_for_week))
 	case match(p, "/events_for_month"):
-		*s.handl = s.logRequest(get(s.events_for_month))
+		*s.Handl = s.logRequest(get(s.events_for_month))
 
 	default:
 		http.NotFound(w, r)
 		return
 	}
-	x := *s.handl
+	x := *s.Handl
 	x.ServeHTTP(w, r)
 }
 
