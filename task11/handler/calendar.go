@@ -156,8 +156,8 @@ func (h *MyStore) delete_event(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *MyStore) events_for_day(w http.ResponseWriter, r *http.Request) {
-	idstr, name, date := parseQuerryRaw(r)
 
+	idstr, name, date := parseQuerryRaw(r)
 	myid, mycalend, err := fromString(idstr, name, date)
 	if err != nil {
 		h.Logger.Fatalf("Error 400")
@@ -173,7 +173,6 @@ func (h *MyStore) events_for_day(w http.ResponseWriter, r *http.Request) {
 		if day == mycalend.Date.Day() {
 			listDayEvents = append(listDayEvents, cur.Name)
 		}
-
 	}
 	//marshal JSON
 	jData, err := json.Marshal(listDayEvents)
@@ -183,12 +182,35 @@ func (h *MyStore) events_for_day(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responceRes(w, jData)
-
-	fmt.Fprint(w, "events_for_day\n")
 }
 func (h *MyStore) events_for_week(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "events_for_week\n")
+	idstr, name, date := parseQuerryRaw(r)
+	myid, mycalend, err := fromString(idstr, name, date)
+	if err != nil {
+		h.Logger.Fatalf("Error 400")
+		http.Error(w, "StatusBadRequest", 400)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	//list for events for day
+	listWeekEvents := []string{}
+	_, myweek := mycalend.Date.ISOWeek()
+	for _, cur := range h.Contx.datamap[myid] {
+		_, curweek := cur.Date.ISOWeek()
+		if myweek == curweek {
+			listWeekEvents = append(listWeekEvents, cur.Name)
+		}
+	}
+	//marshal JSON
+	jData, err := json.Marshal(listWeekEvents)
+	if err != nil {
+		resp := Response{http.StatusServiceUnavailable, "marshall error"}
+		respErr(w, resp)
+		return
+	}
+	responceRes(w, jData)
 }
+
 func (h *MyStore) events_for_month(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "events_for_month\n")
 }
