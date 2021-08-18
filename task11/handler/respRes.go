@@ -1,10 +1,13 @@
 package handler
 
-import "net/http"
+import (
+	"net/http"
+	"time"
+)
 
 type Result struct {
 	Id   int
-	Date string
+	Date time.Time
 	Name string
 }
 

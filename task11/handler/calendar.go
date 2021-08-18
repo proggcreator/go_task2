@@ -5,16 +5,17 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
 
 type Calendar struct {
-	Date string
+	Date time.Time
 	Name string
 }
 
-//from string to int, fill the structure
+//from string to int, date, fill the structure
 func fromString(id string, name string, date string) (int, Calendar, error) {
 	//id to int
 	newid, err := strconv.Atoi(id)
@@ -22,18 +23,25 @@ func fromString(id string, name string, date string) (int, Calendar, error) {
 		logrus.Fatalf("Error 400")
 		return 0, Calendar{}, err
 	}
+	//date string to date
+
+	myDate, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		logrus.Fatalf("Error 400")
+		return 0, Calendar{}, err
+	}
 	return newid, Calendar{
-		Date: date,
+		Date: myDate,
 		Name: name,
 	}, nil
 }
 
 //struct to JSON
-func toJson(id int, name string, date string) (error, []byte) {
+func toJson(id int, calend Calendar) (error, []byte) {
 
 	jData, err := json.Marshal(Result{
-		Name: name,
-		Date: date,
+		Name: calend.Name,
+		Date: calend.Date,
 		Id:   id,
 	})
 	if err != nil {
@@ -67,14 +75,14 @@ func (h *MyStore) create_event(w http.ResponseWriter, r *http.Request) {
 	h.Contx.datamap[myid] = append(h.Contx.datamap[myid], mycalend)
 
 	//convert to json
-	err, myJson := toJson(myid, name, date)
+	err, myJson := toJson(myid, mycalend)
 	if err != nil {
 		resp := Response{http.StatusServiceUnavailable, "error convert to JSON"}
 		respErr(w, resp)
 		return
 
 	}
-
+	fmt.Fprint(w, h.Contx.datamap)
 	// response return JSON
 	responceRes(w, myJson)
 
@@ -105,13 +113,13 @@ func (h *MyStore) update_event(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//convert to json
-	err, myJson := toJson(myid, name, date)
+	err, myJson := toJson(myid, mycalend)
 	if err != nil {
 		resp := Response{http.StatusServiceUnavailable, "error convert to JSON"}
 		respErr(w, resp)
 		return
 	}
-
+	fmt.Fprint(w, h.Contx.datamap)
 	// response return JSON
 	responceRes(w, myJson)
 
@@ -135,10 +143,47 @@ func (h *MyStore) delete_event(w http.ResponseWriter, r *http.Request) {
 			h.Contx.datamap[myid] = mylist[:len(mylist)-1]
 		}
 	}
+	//marshal JSON
+	jData, err := json.Marshal(h.Contx.datamap[myid])
+	if err != nil {
+		resp := Response{http.StatusServiceUnavailable, "marshall error"}
+		respErr(w, resp)
+		return
+	}
+	fmt.Fprint(w, h.Contx.datamap)
+	responceRes(w, jData)
 
 }
 
 func (h *MyStore) events_for_day(w http.ResponseWriter, r *http.Request) {
+	idstr, name, date := parseQuerryRaw(r)
+
+	myid, mycalend, err := fromString(idstr, name, date)
+	if err != nil {
+		h.Logger.Fatalf("Error 400")
+		http.Error(w, "StatusBadRequest", 400)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	//list for events for day
+	listDayEvents := []string{}
+
+	for _, cur := range h.Contx.datamap[myid] {
+		day := cur.Date.Day()
+		if day == mycalend.Date.Day() {
+			listDayEvents = append(listDayEvents, cur.Name)
+		}
+
+	}
+	//marshal JSON
+	jData, err := json.Marshal(listDayEvents)
+	if err != nil {
+		resp := Response{http.StatusServiceUnavailable, "marshall error"}
+		respErr(w, resp)
+		return
+	}
+	responceRes(w, jData)
+
 	fmt.Fprint(w, "events_for_day\n")
 }
 func (h *MyStore) events_for_week(w http.ResponseWriter, r *http.Request) {
