@@ -192,10 +192,12 @@ func (h *MyStore) events_for_week(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	//list for events for day
+	//list for events for week
 	listWeekEvents := []string{}
+	//necessary week number
 	_, myweek := mycalend.Date.ISOWeek()
 	for _, cur := range h.Contx.datamap[myid] {
+		//current week number
 		_, curweek := cur.Date.ISOWeek()
 		if myweek == curweek {
 			listWeekEvents = append(listWeekEvents, cur.Name)
@@ -208,9 +210,38 @@ func (h *MyStore) events_for_week(w http.ResponseWriter, r *http.Request) {
 		respErr(w, resp)
 		return
 	}
+	//return list events for week
 	responceRes(w, jData)
 }
 
 func (h *MyStore) events_for_month(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "events_for_month\n")
+
+	idstr, name, date := parseQuerryRaw(r)
+	myid, mycalend, err := fromString(idstr, name, date)
+	if err != nil {
+		h.Logger.Fatalf("Error 400")
+		http.Error(w, "StatusBadRequest", 400)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	//list for events for month
+	listMonthEvents := []string{}
+	//necessary month number
+	mymonth := mycalend.Date.Month()
+	for _, cur := range h.Contx.datamap[myid] {
+		//current month number
+		curmonth := cur.Date.Month()
+		if mymonth == curmonth {
+			listMonthEvents = append(listMonthEvents, cur.Name)
+		}
+	}
+	//marshal JSON
+	jData, err := json.Marshal(listMonthEvents)
+	if err != nil {
+		resp := Response{http.StatusServiceUnavailable, "marshall error"}
+		respErr(w, resp)
+		return
+	}
+	//return list events for month
+	responceRes(w, jData)
 }
