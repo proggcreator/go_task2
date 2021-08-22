@@ -1,98 +1,71 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"strconv"
 	"strings"
 	"unicode"
 	"unicode/utf8"
 )
 
-func UnpacStr(s string) string {
-	var lastRune, lastLetter rune
-	var result, num strings.Builder
-	var esc bool
-	result.Reset()
-	num.Reset()
-	lastRune = 0
-	lastLetter = 0
-	for i, curRune := range s {
-		// early return
-		if unicode.IsDigit(curRune) && i == 0 {
-			return ""
-		}
-		// if letter writing it to result and optionally unpacking previous sequence
-		if unicode.IsLetter(curRune) {
-			// letter after digit
-			if unicode.IsDigit(lastRune) {
-				numRunes, err := strconv.Atoi(num.String())
-				if err != nil {
-					log.Fatal(err)
-				}
-				for j := 0; j < numRunes-1; j++ {
-					result.WriteRune(lastLetter)
-				}
-				num.Reset()
-			}
-			// any letter
-			result.WriteRune(curRune)
-			lastLetter = curRune
-			lastRune = curRune
-		}
-		// write to digit sequence or flush letters to result
-		if unicode.IsDigit(curRune) {
-			// escape digit
-			if esc {
-				result.WriteRune(curRune)
-				lastLetter = curRune
-				lastRune = curRune
-				esc = false
-			} else {
-				// first digit of new digit sequence
-				if unicode.IsLetter(lastRune) {
-					num.Reset()
-				}
-
-				num.WriteRune(curRune)
-				lastRune = curRune
-				// last digit in input string
-				if i == utf8.RuneCountInString(string(s))-1 {
-					numRunes, err := strconv.Atoi(num.String())
-					if err != nil {
-						log.Fatal(err)
-					}
-					for j := 0; j < numRunes-1; j++ {
-						result.WriteRune(lastLetter)
-					}
-				}
-			}
-
-		}
-		if curRune == '\\' {
-			if lastRune == '\\' {
-				result.WriteRune(curRune)
-				lastLetter = curRune
-				lastRune = curRune
-				esc = false
-
-			} else {
-				esc = true
-				lastRune = curRune
-			}
-		}
+func repiterstr(r rune, n int) string {
+	var repitB strings.Builder
+	for i := 0; i < n-1; i++ {
+		repitB.WriteRune(r)
 	}
-	return result.String()
-
+	return repitB.String()
 }
-func main() {
 
-	var s string
+func Unpack(str string) string {
+	var previousRune rune
+	var b strings.Builder
+	escape := '\\'
+	flagTwoEscape := false
+	flagEscapeDigit := false
+	for len(str) > 0 {
+		r, size := utf8.DecodeRuneInString(str)
+		str = str[size:]
+		switch {
 
-	_, err := fmt.Scanf("%s", &s)
-	if err != nil {
-		log.Println(err)
+		// catching two escape
+		case previousRune == escape && r == escape:
+			previousRune = r
+			flagTwoEscape = true
+			b.WriteRune(r)
+
+			//  qwe\\5 must have - qwe\\\\\
+		case unicode.IsDigit(r) && flagTwoEscape:
+			n, _ := strconv.Atoi(string(r))
+			b.WriteString(repiterstr(previousRune, n))
+			flagTwoEscape = false
+
+		//   qwe\45 must have - qwe44444
+		case unicode.IsDigit(previousRune) && unicode.IsDigit(r) && flagEscapeDigit:
+			n, _ := strconv.Atoi(string(r))
+			b.WriteString(repiterstr(previousRune, n))
+			flagEscapeDigit = false
+			previousRune = r
+
+		//  qwe\4\5 must have - qwe45
+		case previousRune == escape && unicode.IsDigit(r):
+			flagEscapeDigit = true
+			b.WriteRune(r)
+			previousRune = r
+
+		// a4
+		case unicode.IsDigit(r) && unicode.IsLetter(previousRune):
+			n, _ := strconv.Atoi(string(r))
+			b.WriteString(repiterstr(previousRune, n))
+			previousRune = r
+
+		// if letter
+		case unicode.IsLetter(r):
+			b.WriteRune(r)
+			previousRune = r
+
+		// if escape
+		case r == escape:
+			previousRune = r
+		}
 	}
-
-	fmt.Println(UnpacStr(s))
+	return b.String()
 }
