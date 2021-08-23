@@ -3,21 +3,20 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/beevik/ntp"
 )
 
 func Mycurrtime() {
 
-	time, err := ntp.Time("0.beevik-ntp.pool.ntp.org")
+	t, err := ntp.Time("0.beevik-ntp.pool.ntp.org")
 
 	if err != nil {
-
 		fmt.Println(err) // вывод ошибки
 		os.Exit(-1)      //код выхода
 
 	}
-	fmt.Println("Точное время:")
-	fmt.Println(time) ///вывод точного времени
+	fmt.Printf("Точное время: %s / Текущее время: %s", t, time.Now())
 
 }

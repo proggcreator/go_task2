@@ -1,5 +1,7 @@
 package main
 
+// go run main.go -n  text.txt the
+//реализована работа с первым совпадением
 import (
 	"bufio"
 	"flag"
@@ -11,8 +13,13 @@ import (
 )
 
 func Print_String_After(strlist []string, pos int, N int) {
-
 	for i := pos; i <= pos+N; i++ {
+		fmt.Println(strlist[i])
+
+	}
+}
+func Print_String_Before(strlist []string, pos int, N int) {
+	for i := pos - N; i <= pos; i++ {
 		fmt.Println(strlist[i])
 
 	}
@@ -20,18 +27,33 @@ func Print_String_After(strlist []string, pos int, N int) {
 func FindStr(strlist []string, lookFor string) int {
 	for i, curstr := range strlist {
 		if strings.Contains(curstr, lookFor) == true {
+			//вернуть индекс строки
 			return i
 		}
 	}
+	log.Fatalf("No match found ")
+	return 0
+}
+func FindFullStr(strlist []string, lookFor string) int {
+	for i, curstr := range strlist {
+		if curstr == lookFor {
+			//вернуть индекс строки
+			return i
+		}
+	}
+	log.Fatalf("No match found ")
 	return 0
 }
 func main() {
 
-	flaga := flag.Int("a", 0, "number of string")
-	//flagn := flag.Bool("n", false, "int sort")
+	flaga := flag.Int("A", 0, "after number of string")
+	flagb := flag.Int("B", 0, "before number of string")
+	flagn := flag.Bool("n", false, "index of string")
+	flagf := flag.Bool("F", false, "index of full string")
+	flagi := flag.Bool("i", false, "ignore case")
+
 	flag.Parse()
 	lookFor := flag.Arg(1)
-	fmt.Println(lookFor)
 	var strlist []string
 	var in io.Reader
 
@@ -48,25 +70,46 @@ func main() {
 		in = os.Stdin
 	}
 	scanner := bufio.NewScanner(in)
-
+	//считывам построчно, добавляем в массив
 	for scanner.Scan() {
-		//считывам построчно, добавляем в массив
-		strlist = append(strlist, scanner.Text())
+		//если флаг приводим  все к нижнему регистру
+		if *flagi {
+			strlist = append(strlist, strings.ToLower(scanner.Text()))
+		} else {
+			strlist = append(strlist, scanner.Text())
+		}
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+	pos_str := 0
+	//реализация флага f
+	if *flagf {
+		pos_str = FindFullStr(strlist, lookFor)
+
+	} else {
+		pos_str = FindStr(strlist, lookFor) //поиск строки с совпадением
+
+	}
+
+	if *flagn {
+		fmt.Println("Номер строки: ", pos_str)
+
+	}
 	//проверка на количество строк
-	if *flaga > len(strlist) {
-		fmt.Println("Error too many N")
+	if (*flaga + pos_str) > len(strlist) {
+		fmt.Println("Error out of len  ")
 		return
 	}
-	pos_str := FindStr(strlist, lookFor) //поиск строки с совпадением
 	if *flaga != 0 {
-
 		Print_String_After(strlist, pos_str, *flaga)
-	} else {
-		fmt.Println(strlist[pos_str])
+		return
+	}
+
+	//проверка на количество строк
+	if (pos_str - *flagb) >= 0 {
+		Print_String_Before(strlist, pos_str, *flaga)
+		return
 	}
 
 }

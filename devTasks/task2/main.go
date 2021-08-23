@@ -26,43 +26,43 @@ func Unpack(str string) string {
 		str = str[size:]
 		switch {
 
-		// catching two escape
+		//если встретили "//"
 		case previousRune == escape && r == escape:
 			previousRune = r
 			flagTwoEscape = true
 			b.WriteRune(r)
 
-			//  qwe\\5 must have - qwe\\\\\
+			//  qwe\\5 получаем - qwe\\\\\
 		case unicode.IsDigit(r) && flagTwoEscape:
 			n, _ := strconv.Atoi(string(r))
 			b.WriteString(repiterstr(previousRune, n))
 			flagTwoEscape = false
 
-		//   qwe\45 must have - qwe44444
+		//   qwe\45 получаем - qwe44444
 		case unicode.IsDigit(previousRune) && unicode.IsDigit(r) && flagEscapeDigit:
 			n, _ := strconv.Atoi(string(r))
 			b.WriteString(repiterstr(previousRune, n))
 			flagEscapeDigit = false
 			previousRune = r
 
-		//  qwe\4\5 must have - qwe45
+		//  qwe\4\5 получаем - qwe45
 		case previousRune == escape && unicode.IsDigit(r):
 			flagEscapeDigit = true
 			b.WriteRune(r)
 			previousRune = r
 
-		// a4
+		// a4 последовательность
 		case unicode.IsDigit(r) && unicode.IsLetter(previousRune):
 			n, _ := strconv.Atoi(string(r))
 			b.WriteString(repiterstr(previousRune, n))
 			previousRune = r
 
-		// if letter
+		// если буква
 		case unicode.IsLetter(r):
 			b.WriteRune(r)
 			previousRune = r
 
-		// if escape
+		// ели последовательность / дальше
 		case r == escape:
 			previousRune = r
 		}

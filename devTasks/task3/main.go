@@ -1,4 +1,4 @@
-//считается что все колонки заполеннны
+//считается что все колонки заполеннны //go run main.go -k=0 text.txt
 package main
 
 import (
@@ -64,11 +64,9 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+	//реализация флага r
 	matrix := crmatrix(strlist)
-	if *flagn == true {
-		//реализация флага r
-		fmt.Println("d")
-	} else if *flagr == true {
+	if *flagr == true {
 		sort.Slice(matrix, func(i, j int) bool { return matrix[i][*flagk] > matrix[j][*flagk] })
 		//реализация флага n
 	} else if *flagn == true {
