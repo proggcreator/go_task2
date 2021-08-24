@@ -44,6 +44,6 @@ func main() {
 		sig(3*time.Second),
 	)
 
-	fmt.Printf("fone after %v\n", time.Since(start))
+	fmt.Printf("done after %v\n", time.Since(start))
 
 }

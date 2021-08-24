@@ -8,8 +8,10 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 )
 
+//nc tcp 192.168.0.113 80
 func ClientNetcat(arg []string) error {
 	if len(arg) < 1 {
 		return errors.New("Error: few netcat arguments")
@@ -50,10 +52,19 @@ func main() {
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
-		// обработка ввода
-		if err = execInput(input); err != nil {
-			fmt.Fprintln(os.Stderr, err)
+		// обработка ввода, разбиваем по |
+		smas := strings.Split(input, "|")
+		var wg sync.WaitGroup
+		wg.Add(len(smas))
+		for i := 0; i <= len(smas); i++ {
+			go func() {
+				if err = execInput(smas[i]); err != nil {
+					fmt.Fprintln(os.Stderr, err)
+				}
+				wg.Done()
+			}()
 		}
+		wg.Wait()
 	}
 
 }
