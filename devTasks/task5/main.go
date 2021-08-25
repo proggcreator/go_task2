@@ -4,6 +4,7 @@ package main
 //реализована работа с первым совпадением
 import (
 	"bufio"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -12,47 +13,71 @@ import (
 	"strings"
 )
 
-func Print_String_After(strlist []string, pos int, N int) {
-	for i := pos; i <= pos+N; i++ {
-		fmt.Println(strlist[i])
-
+func Print_String_After(strlist []string, pos int, N int) error {
+	//проверка на количество строк для флага a
+	if (N + pos) <= len(strlist) {
+		for i := pos; i <= pos+N; i++ {
+			fmt.Println(strlist[i])
+		}
+		return nil
 	}
-}
-func Print_String_Before(strlist []string, pos int, N int) {
-	for i := pos - N; i <= pos; i++ {
-		fmt.Println(strlist[i])
+	err := errors.New("Error out of len")
+	return err
 
-	}
 }
-func FindStr(strlist []string, lookFor string) int {
+func Print_String_Before(strlist []string, pos int, N int) error {
+	//проверка на количество строк для флага b
+	if (pos - N) >= 0 {
+		for i := pos - N; i <= pos; i++ {
+			fmt.Println(strlist[i])
+		}
+		return nil
+	}
+	err := errors.New("Error out of len")
+	return err
+
+}
+func Print_String_Around(strlist []string, pos int, N int) error {
+	if (pos-N >= 0) && (pos+N <= len(strlist)) {
+		for i := pos - N; i <= pos+N; i++ {
+			fmt.Println(strlist[i])
+		}
+		return nil
+	}
+	err := errors.New("Out range")
+	return err
+}
+func FindStr(strlist []string, lookFor string) (int, error) {
 	for i, curstr := range strlist {
 		if strings.Contains(curstr, lookFor) == true {
 			//вернуть индекс строки
-			return i
+			return i, nil
 		}
 	}
-	log.Fatalf("No match found ")
-	return 0
+	err := errors.New("No match found")
+	return 0, err
 }
-func FindFullStr(strlist []string, lookFor string) int {
+func FindFullStr(strlist []string, lookFor string) (int, error) {
 	for i, curstr := range strlist {
 		if curstr == lookFor {
 			//вернуть индекс строки
-			return i
+			return i, nil
 		}
 	}
-	log.Fatalf("No match found ")
-	return 0
+	err := errors.New("No match found ")
+	return 0, err
 }
 func main() {
 
 	flaga := flag.Int("A", 0, "after number of string")
 	flagb := flag.Int("B", 0, "before number of string")
+	flagc := flag.Int("c", 0, "arount number of string")
 	flagn := flag.Bool("n", false, "index of string")
 	flagf := flag.Bool("F", false, "index of full string")
 	flagi := flag.Bool("i", false, "ignore case")
 
 	flag.Parse()
+	//что искать
 	lookFor := flag.Arg(1)
 	var strlist []string
 	var in io.Reader
@@ -72,7 +97,7 @@ func main() {
 	scanner := bufio.NewScanner(in)
 	//считывам построчно, добавляем в массив
 	for scanner.Scan() {
-		//если флаг приводим  все к нижнему регистру
+		//если флаг i приводим  все к нижнему регистру
 		if *flagi {
 			strlist = append(strlist, strings.ToLower(scanner.Text()))
 		} else {
@@ -83,32 +108,38 @@ func main() {
 		log.Fatal(err)
 	}
 	pos_str := 0
-	//реализация флага f
+	//если флаг i приводим все к нижнему регистру
+	if *flagi {
+		lookFor = strings.ToLower(lookFor)
+	}
+	//реализация флага f точное совпадение со строкой
 	if *flagf {
-		pos_str = FindFullStr(strlist, lookFor)
+		pos_str, _ = FindFullStr(strlist, lookFor)
 
 	} else {
-		pos_str = FindStr(strlist, lookFor) //поиск строки с совпадением
+		pos_str, _ = FindStr(strlist, lookFor) //сначала поиск строки с совпадением
 
 	}
-
+	//реализация флага n печать номера строки
 	if *flagn {
-		fmt.Println("Номер строки: ", pos_str)
+		fmt.Println("Number of string: ", pos_str)
 
 	}
-	//проверка на количество строк
-	if (*flaga + pos_str) > len(strlist) {
-		fmt.Println("Error out of len  ")
-		return
-	}
+
+	//реализация флага a
 	if *flaga != 0 {
 		Print_String_After(strlist, pos_str, *flaga)
 		return
 	}
 
-	//проверка на количество строк
-	if (pos_str - *flagb) >= 0 {
+	//реализация флага b
+	if *flagb != 0 {
 		Print_String_Before(strlist, pos_str, *flaga)
+		return
+	}
+	//реализация флага C
+	if *flagc != 0 {
+		Print_String_Around(strlist, pos_str, *flaga)
 		return
 	}
 

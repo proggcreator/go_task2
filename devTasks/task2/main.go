@@ -21,11 +21,13 @@ func Unpack(str string) string {
 	escape := '\\'
 	flagTwoEscape := false
 	flagEscapeDigit := false
+	//пока не закончится строка
 	for len(str) > 0 {
+		//берем руны попорядку
 		r, size := utf8.DecodeRuneInString(str)
+		//изменяем размер строки
 		str = str[size:]
 		switch {
-
 		//если встретили "//"
 		case previousRune == escape && r == escape:
 			previousRune = r
@@ -51,13 +53,13 @@ func Unpack(str string) string {
 			b.WriteRune(r)
 			previousRune = r
 
-		// a4 последовательность
+		// a4 последовательность - aaaa
 		case unicode.IsDigit(r) && unicode.IsLetter(previousRune):
 			n, _ := strconv.Atoi(string(r))
 			b.WriteString(repiterstr(previousRune, n))
 			previousRune = r
 
-		// если буква
+		// если буква записали и дальше
 		case unicode.IsLetter(r):
 			b.WriteRune(r)
 			previousRune = r

@@ -40,11 +40,11 @@ func mySort(strlist []string, flagk int, flagn bool, flagr bool, flagu bool) [][
 	}
 	//реализация флага n
 	if flagn == true {
-		sort.Slice(matrix, func(i, j int) bool { return StrToInt(matrix[i][flagk]) < StrToInt(matrix[j][*flagk]) })
+		sort.Slice(matrix, func(i, j int) bool { return StrToInt(matrix[i][flagk]) < StrToInt(matrix[j][flagk]) })
 	}
 	//реализация флага k или по умолчанию
 	sort.Slice(matrix, func(i, j int) bool {
-		return StrToInt(matrix[i][flagk]) < StrToInt(matrix[j][flagk])
+		return matrix[i][flagk] < matrix[j][flagk]
 	})
 
 	//реализация флага u
