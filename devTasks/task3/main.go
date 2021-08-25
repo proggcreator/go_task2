@@ -14,6 +14,7 @@ import (
 	"strings"
 )
 
+//создание матрицы
 func crmatrix(lst []string) [][]string {
 	var matrix [][]string
 	for _, str := range lst {
@@ -22,6 +23,7 @@ func crmatrix(lst []string) [][]string {
 	return matrix
 }
 
+//из строки в int
 func StrToInt(s string) (i int) {
 	i, err := strconv.Atoi(s)
 	if err != nil {
@@ -30,12 +32,46 @@ func StrToInt(s string) (i int) {
 	}
 	return i
 }
+func mySort(strlist []string, flagk int, flagn bool, flagr bool, flagu bool) [][]string {
+	//реализация флага r
+	matrix := crmatrix(strlist)
+	if flagr == true {
+		sort.Slice(matrix, func(i, j int) bool { return matrix[i][flagk] > matrix[j][flagk] })
+	}
+	//реализация флага n
+	if flagn == true {
+		sort.Slice(matrix, func(i, j int) bool { return StrToInt(matrix[i][flagk]) < StrToInt(matrix[j][*flagk]) })
+	}
+	//реализация флага k или по умолчанию
+	sort.Slice(matrix, func(i, j int) bool {
+		return StrToInt(matrix[i][flagk]) < StrToInt(matrix[j][flagk])
+	})
 
+	//реализация флага u
+	if flagu == true {
+		for i, str := range matrix {
+			if i != len(matrix)-1 { //если не последняя строка
+				if reflect.DeepEqual(matrix[i], matrix[i+1]) == false { //рекурсивное сравнение
+					fmt.Println(str)
+				}
+			}
+		}
+	} else {
+		for _, str := range matrix {
+			fmt.Println(str)
+		}
+
+	}
+	return matrix
+}
 func main() {
-
+	//флаг колонка для сортировки
 	flagk := flag.Int("k", 0, "number of column")
+	//сортировать по числовому значению
 	flagn := flag.Bool("n", false, "int sort")
+	//сортировать в обратном порядке
 	flagr := flag.Bool("r", false, "reverse sort")
+	//не выводить повторяющиеся строки
 	flagu := flag.Bool("u", false, "a bool")
 	flag.Parse()
 
@@ -48,7 +84,6 @@ func main() {
 		if err != nil {
 			fmt.Println("error opening file: err:", err)
 			os.Exit(1)
-
 		}
 		defer f.Close()
 		in = f
@@ -64,34 +99,7 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	//реализация флага r
-	matrix := crmatrix(strlist)
-	if *flagr == true {
-		sort.Slice(matrix, func(i, j int) bool { return matrix[i][*flagk] > matrix[j][*flagk] })
-		//реализация флага n
-	} else if *flagn == true {
-		sort.Slice(matrix, func(i, j int) bool { return StrToInt(matrix[i][*flagk]) < StrToInt(matrix[j][*flagk]) })
-	} else {
-		//реализация флага k или по умолчанию
-		sort.Slice(matrix, func(i, j int) bool {
 
-			return StrToInt(matrix[i][*flagk]) < StrToInt(matrix[j][*flagk])
-		})
-	}
-	//реализация флага u
-	if *flagu == true {
-		for i, str := range matrix {
-			if i != len(matrix)-1 { //если не последняя строка
-				if reflect.DeepEqual(matrix[i], matrix[i+1]) == false { //рекурсивное сравнение
-					fmt.Println(str)
-				}
-			}
-		}
-	} else {
-		for _, str := range matrix {
-			fmt.Println(str)
-		}
-
-	}
+	mySort(strlist, *flagk, *flagn, *flagr, *flagu)
 
 }
