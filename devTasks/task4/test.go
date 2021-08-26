@@ -12,7 +12,7 @@ func Test001(t *testing.T) {
 	got := myanagrams(masstr)
 
 	if reflect.DeepEqual(want, got) {
-		t.Errorf("ps.Unpack() == %q, want %q", got, want)
+		t.Errorf("Got == %q, want %q", got, want)
 	}
 }
 func Test002(t *testing.T) {
@@ -22,7 +22,7 @@ func Test002(t *testing.T) {
 	got := myanagrams(masstr)
 
 	if reflect.DeepEqual(want, got) {
-		t.Errorf("ps.Unpack() == %q, want %q", got, want)
+		t.Errorf("Got == %q, want %q", got, want)
 	}
 }
 func Test003(t *testing.T) {
@@ -32,7 +32,7 @@ func Test003(t *testing.T) {
 	got := myanagrams(masstr)
 
 	if reflect.DeepEqual(want, got) {
-		t.Errorf("ps.Unpack() == %q, want %q", got, want)
+		t.Errorf("Got == %q, want %q", got, want)
 	}
 }
 func Test004(t *testing.T) {
@@ -42,7 +42,7 @@ func Test004(t *testing.T) {
 	got := myanagrams(masstr)
 
 	if reflect.DeepEqual(want, got) {
-		t.Errorf("ps.Unpack() == %q, want %q", got, want)
+		t.Errorf("Got == %q, want %q", got, want)
 	}
 }
 func Test005(t *testing.T) {
@@ -52,6 +52,6 @@ func Test005(t *testing.T) {
 	got := myanagrams(masstr)
 
 	if reflect.DeepEqual(want, got) {
-		t.Errorf("ps.Unpack() == %q, want %q", got, want)
+		t.Errorf("Got == %q, want %q", got, want)
 	}
 }

@@ -11,6 +11,7 @@ import (
 	"strings"
 )
 
+//создаем разбиваем по строкам и столбцам
 func CrmMatrix(lst []string, separator string) [][]string {
 	var matrix [][]string
 	for _, str := range lst {
@@ -19,41 +20,63 @@ func CrmMatrix(lst []string, separator string) [][]string {
 	return matrix
 }
 
+//вывести только строки с разделителем
 func PrintOnlySep(matr [][]string) {
 	for _, str := range matr {
-		if len(str) > 1 { //если в срезе несколько элементов, есть разделитель
+		//если в срезе несколько элементов - есть разделитель
+		if len(str) > 1 {
 			fmt.Println(str)
 		}
 	}
 }
 
-func StrFflagToIntList(str string) (lst []int) { //список int для flagf
+//вывод колонок
+func StrFflagToIntList(str string) (lst []int) {
+	//разбиваем строку по "," - номера нужных столбцов
 	lststring := strings.Split(str, ",")
 	for _, s := range lststring {
+		//преобразовать в int нужные колонки
 		i, err := strconv.Atoi(s)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(2)
 		}
+		//список int колонок
 		lst = append(lst, i)
 	}
 	return lst
 }
+
+//вывод нужных колонок
 func PrintFlagf(matr [][]string, lst []int) {
 	for _, str := range matr {
 		for i := 0; i < len(lst); i++ {
-
 			fmt.Print(str[lst[i]] + "   ")
 		}
 		fmt.Println()
 	}
+}
 
+func myCut(strlist []string, separator string, flagf string, flags bool) {
+
+	//поддерржка флага d кастомный разделитель
+	matrix := CrmMatrix(strlist, separator)
+
+	//поддержка флага f выбор колонок (-f=0,1 text.txt)
+	if len(flagf) > 0 {
+		lst := StrFflagToIntList(flagf)
+		PrintFlagf(matrix, lst)
+	}
+	//поддрержка флага s вывод строки у которых есть разделитель
+	if flags == true {
+		PrintOnlySep(matrix)
+	}
 }
 
 func main() {
 	flags := flag.Bool("s", false, "print only separator")
 	flagd := flag.String("d", "   ", "init separator")
-	flagf := flag.String("f", "", "print only separator")
+	flagf := flag.String("f", "", "chose columns")
 	flag.Parse()
 	//lookFor := flag.Arg(1)
 	var strlist []string
@@ -75,22 +98,13 @@ func main() {
 	scanner := bufio.NewScanner(in)
 
 	for scanner.Scan() {
-		//считывам построчно, добавляем в массив
+		//считывам построчно, добавляем все в массив
 		strlist = append(strlist, scanner.Text())
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-
-	matrix := CrmMatrix(strlist, separator) //поддерржка флага d
-
-	if len(*flagf) > 0 { //поддержка флага f (-f=0,1 text.txt)
-		lst := StrFflagToIntList(*flagf)
-		PrintFlagf(matrix, lst)
-	}
-
-	if *flags == true {
-		PrintOnlySep(matrix) //поддрержка флага s
-	}
+	//реализация флагов
+	myCut(strlist, separator, *flagf, *flags)
 
 }
