@@ -13,11 +13,21 @@ import (
 
 //nc tcp 192.168.0.113 80
 func ClientNetcat(arg []string) error {
+	//адрес и  порт по умолчанию
+	var curfip string
+	var curfport string
 	if len(arg) < 1 {
 		return errors.New("Error: few netcat arguments")
+	} else if len(arg) == 1 {
+		curfip = "192.168.0.113 "
+		curfport = "80"
 	}
+	//если адрес и порт заданны
+	curfip = arg[1]
+	curfport = arg[2]
+
 	// arg задает udp или tcp протокол
-	c, err := net.Dial(arg[0], arg[1]+":"+arg[2])
+	c, err := net.Dial(arg[0], curfip+":"+curfport)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -40,7 +50,6 @@ func ClientNetcat(arg []string) error {
 			return nil
 		}
 	}
-
 }
 
 func main() {
@@ -83,7 +92,7 @@ func execInput(input string) error {
 		//реализация cd
 		return os.Chdir(args[1])
 
-		//утилита
+		//утилита netcat
 	case "nc":
 		err := ClientNetcat(args[1:])
 		if err != nil {
