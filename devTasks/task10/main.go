@@ -1,88 +1,36 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"net"
-	"os"
 	"strconv"
 	"time"
 )
 
+//myclient "github.com/proggcreator/go_task2/devTasks/task10/cmd"
 var (
 	host    string
 	port    int
 	timeout time.Duration
 )
 
-func readRoutine(ctx context.Context, conn net.Conn, cancel context.CancelFunc) {
-	defer cancel()
-	scanner := bufio.NewScanner(conn)
-
-OUTER:
-	for {
-		select {
-		case <-ctx.Done():
-			fmt.Println("break read")
-			break OUTER
-		default:
-			if scanner.Err() != nil {
-				fmt.Println(scanner.Err())
-			}
-			if !scanner.Scan() {
-				log.Printf("CANNOT SCAN from conn")
-				break OUTER
-			}
-			text := scanner.Text()
-			log.Printf("from server: %s", text)
-		}
-	}
-
-	log.Printf("finished read")
-}
-
-func writeRoutine(ctx context.Context, conn net.Conn, cancel context.CancelFunc) {
-	defer cancel()
-	scanner := bufio.NewScanner(os.Stdin)
-
-OUTER:
-	for {
-		select {
-		case <-ctx.Done():
-			fmt.Println("break write")
-			break OUTER
-		default:
-			if !scanner.Scan() {
-				break OUTER
-			}
-			str := scanner.Text()
-			log.Printf("To server %v\n", str)
-
-			_, err := conn.Write([]byte(fmt.Sprintf("%s\n", str)))
-			if err != nil {
-				log.Printf("error on write to server: %v\n", err)
-				break OUTER
-			}
-		}
-	}
-
-	log.Printf("finished write")
-}
-
+//проверка наличия порта и хоста
 func parseArgs(args []string) error {
+	//если хост или порт не указанны
 	if len(args) < 2 {
 		return errors.New("should be host and port")
 	}
 
 	host := args[0]
+	//если хост не указан
 	if host == "" {
 		return errors.New("host should be not empty")
 	}
-
+	//если порт не указан
 	port, _ := strconv.Atoi(args[1])
 	if port == 0 {
 		return errors.New("port can't be zero")
@@ -92,7 +40,7 @@ func parseArgs(args []string) error {
 }
 
 func main() {
-
+	//флаг timeout по умолчанию 10сек
 	flagtime := flag.String("timeout", "10s", "print only separator")
 
 	flag.Parse()
@@ -117,10 +65,14 @@ func main() {
 	addr := fmt.Sprintf("%s:%v", host, port)
 	fmt.Printf("trying %s, timeout: %s...\n", addr, timeout)
 
+	//установка timeout соединения
 	dialer := &net.Dialer{Timeout: timeout}
+
+	//пустой главный контекст not-nil
 	ctx := context.Background()
+	//производный контекст, завершится после завершения основного
 	ctx, cancel := context.WithCancel(ctx)
-	//создание соединения
+	//создание соединения, с контекстом
 	conn, err := dialer.DialContext(ctx, "tcp", addr)
 	if err != nil {
 		log.Fatalf("cannot connect: %v", err)
@@ -128,9 +80,9 @@ func main() {
 	fmt.Printf("connected to %s\n", addr)
 
 	//чтение
-	go readRoutine(ctx, conn, cancel)
+	go myclient.readRoutine(ctx, conn, cancel)
 	//запись
-	go writeRoutine(ctx, conn, cancel)
+	go myclient.writeRoutine(ctx, conn, cancel)
 
 	//ждем сигнала завершения
 	select {
