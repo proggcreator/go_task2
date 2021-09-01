@@ -54,3 +54,11 @@ func main() {
 	fmt.Println()
 
 }
+
+/*Starting create account
+Account created
+
+Starting add money to wallet
+Account Verified
+SecurityCode Verified
+Wallet balance added successfully*/

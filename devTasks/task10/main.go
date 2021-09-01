@@ -70,7 +70,7 @@ func main() {
 
 	//пустой главный контекст not-nil
 	ctx := context.Background()
-	//производный контекст, завершится после завершения основного
+	//производный контекст с новым done каналом, для завершения работы
 	ctx, cancel := context.WithCancel(ctx)
 	//создание соединения, с контекстом
 	conn, err := dialer.DialContext(ctx, "tcp", addr)
@@ -79,9 +79,9 @@ func main() {
 	}
 	fmt.Printf("connected to %s\n", addr)
 
-	//чтение
+	//чтение из соединения
 	go myclient.readRoutine(ctx, conn, cancel)
-	//запись
+	//запись в соединение
 	go myclient.writeRoutine(ctx, conn, cancel)
 
 	//ждем сигнала завершения

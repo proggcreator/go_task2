@@ -13,39 +13,42 @@ import (
 	"strings"
 )
 
-func Print_String_After(strlist []string, pos int, N int) error {
+func Find_String_After(strlist []string, pos int, N int) ([]string, error) {
+	changedList := []string{}
 	//проверка на количество строк для флага a
 	if (N + pos) <= len(strlist) {
 		for i := pos; i <= pos+N; i++ {
-			fmt.Println(strlist[i])
+			changedList = append(changedList, strlist[i])
 		}
-		return nil
+		return changedList, nil
 	}
 	err := errors.New("Error out of len")
-	return err
+	return changedList, err
 
 }
-func Print_String_Before(strlist []string, pos int, N int) error {
+func Find_String_Before(strlist []string, pos int, N int) ([]string, error) {
+	changedList := []string{}
 	//проверка на количество строк для флага b
 	if (pos - N) >= 0 {
 		for i := pos - N; i <= pos; i++ {
-			fmt.Println(strlist[i])
+			changedList = append(changedList, strlist[i])
 		}
-		return nil
+		return changedList, nil
 	}
 	err := errors.New("Error out of len")
-	return err
+	return changedList, err
 
 }
-func Print_String_Around(strlist []string, pos int, N int) error {
+func Find_String_Around(strlist []string, pos int, N int) ([]string, error) {
+	changedList := []string{}
 	if (pos-N >= 0) && (pos+N <= len(strlist)) {
 		for i := pos - N; i <= pos+N; i++ {
-			fmt.Println(strlist[i])
+			changedList = append(changedList, strlist[i])
 		}
-		return nil
+		return changedList, nil
 	}
 	err := errors.New("Out range")
-	return err
+	return changedList, err
 }
 func FindStr(strlist []string, lookFor string) (int, error) {
 	for i, curstr := range strlist {
@@ -67,11 +70,42 @@ func FindFullStr(strlist []string, lookFor string) (int, error) {
 	err := errors.New("No match found ")
 	return 0, err
 }
+func Find_Count(strlist []string, lookFor string) int {
+	count := 0
+	for _, curstr := range strlist {
+		if strings.Contains(curstr, lookFor) == true {
+			//+1
+			count++
+		}
+	}
+	return count
+}
+func print_res(strlist []string) {
+	for x := range strlist {
+		fmt.Println(x)
+	}
+}
+
+func Remove_Match(strlist []string, lookFor string) []string {
+	//соединяем в текст строки
+	newtext := strings.Join(strlist, " ")
+	//разбиваем по словам
+	strlist = strings.Split(newtext, " ")
+	newlist := []string{}
+	for _, x := range strlist {
+		if x != lookFor {
+			newlist = append(newlist, x)
+		}
+	}
+	return newlist
+}
 func main() {
 
 	flaga := flag.Int("A", 0, "after number of string")
 	flagb := flag.Int("B", 0, "before number of string")
-	flagc := flag.Int("c", 0, "arount number of string")
+	flagC := flag.Int("C", 0, "arount number of string")
+	flagv := flag.Bool("v", false, "print strings without match ")
+	flagc := flag.Bool("c", false, "count string match ")
 	flagn := flag.Bool("n", false, "index of string")
 	flagf := flag.Bool("F", false, "index of full string")
 	flagi := flag.Bool("i", false, "ignore case")
@@ -80,6 +114,7 @@ func main() {
 	//что искать
 	lookFor := flag.Arg(1)
 	var strlist []string
+	var err error
 	var in io.Reader
 
 	//чтение из файла или stdin
@@ -123,24 +158,47 @@ func main() {
 	//реализация флага n печать номера строки
 	if *flagn {
 		fmt.Println("Number of string: ", pos_str)
+	}
+	//реализация флага c печать количества совпадений
+	if *flagc {
+		count := Find_Count(strlist, lookFor)
+		fmt.Println("Count match: ", count)
+		return
 
+	}
+	//реализация флага v удаление совппадений
+	if *flagv {
+		strlist := Remove_Match(strlist, lookFor)
+		print_res(strlist)
+		return
 	}
 
 	//реализация флага a
 	if *flaga != 0 {
-		Print_String_After(strlist, pos_str, *flaga)
-		return
+		strlist, err = Find_String_After(strlist, pos_str, *flaga)
+		if err != nil {
+			fmt.Println("error Print_String_After", err)
+			return
+		}
 	}
 
 	//реализация флага b
 	if *flagb != 0 {
-		Print_String_Before(strlist, pos_str, *flaga)
-		return
+		strlist, err = Find_String_Before(strlist, pos_str, *flaga)
+		if err != nil {
+			fmt.Println("error Print_String_Before", err)
+			return
+		}
 	}
 	//реализация флага C
-	if *flagc != 0 {
-		Print_String_Around(strlist, pos_str, *flaga)
-		return
+	if *flagC != 0 {
+		strlist, err = Find_String_Around(strlist, pos_str, *flaga)
+		if err != nil {
+			fmt.Println("error Print_String_Before", err)
+			return
+		}
 	}
+	//печать результата
+	print_res(strlist)
 
 }

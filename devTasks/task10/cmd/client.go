@@ -10,6 +10,7 @@ import (
 )
 
 func readRoutine(ctx context.Context, conn net.Conn, cancel context.CancelFunc) {
+	//функция завершения
 	defer cancel()
 	scanner := bufio.NewScanner(conn)
 

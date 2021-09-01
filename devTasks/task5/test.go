@@ -1,31 +1,33 @@
 package main
 
 import (
+	"reflect"
 	"testing"
 )
 
 func Test001(t *testing.T) {
-	want := 2
-
+	want := []string{" type allows one", "to define independent"}
 	flaga := 1
 	ps := []string{"The FlagSet", " type allows one", "to define independent", "sets of flags"}
 	lookFor := "type"
-	got, _ := FindStr(ps, lookFor)
-	Print_String_After(ps, got, flaga)
-	if want != got {
+	inx, _ := FindStr(ps, lookFor)
+	got, _ := Find_String_After(ps, inx, flaga)
+
+	if reflect.DeepEqual(want, got) {
 		t.Errorf("Got == %q, want %q", got, want)
 	}
 
 }
 
 func Test002(t *testing.T) {
-	want := 2
-	flaga := 1
+	want := []string{"The FlagSet", " type allows one"}
+	flagb := 1
 	ps := []string{"The FlagSet", " type allows one", "to define independent", "sets of flags"}
 	lookFor := "type"
-	got, _ := FindStr(ps, lookFor)
-	Print_String_Before(ps, got, flaga)
-	if want != got {
+	inx, _ := FindStr(ps, lookFor)
+	got, _ := Find_String_Before(ps, inx, flagb)
+
+	if reflect.DeepEqual(want, got) {
 		t.Errorf("Got == %q, want %q", got, want)
 	}
 }
@@ -41,25 +43,25 @@ func Test003(t *testing.T) {
 }
 
 func Test004(t *testing.T) {
-	flagc := 2
+	flagC := 2
 	want := "No match found"
 	ps := []string{"The FlagSet", " type allows one", "to define independent", "sets of flags"}
 	lookFor := "dfsdfsdfs"
-	got, goterr := FindFullStr(ps, lookFor)
-	Print_String_Around(ps, got, flagc)
-	if want != goterr.Error() {
+	indx, _ := FindFullStr(ps, lookFor)
+	_, got := Find_String_Around(ps, indx, flagC)
+	if want != got.Error() {
 		t.Errorf("Got == %q, want %q", got, want)
 	}
 }
 
 func Test005(t *testing.T) {
 	flagc := 5
-	want := "Error out of len"
+	want := "Out range"
 	ps := []string{"The FlagSet", " type allows one", "to define independent", "sets of flags"}
 	lookFor := "type"
-	got, _ := FindFullStr(ps, lookFor)
-	goterr := Print_String_Around(ps, got, flagc)
-	if want != goterr.Error() {
+	indx, _ := FindFullStr(ps, lookFor)
+	_, got := Find_String_Around(ps, indx, flagc)
+	if want != got.Error() {
 		t.Errorf("Got == %q, want %q", got, want)
 	}
 }

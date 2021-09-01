@@ -21,13 +21,15 @@ func CrmMatrix(lst []string, separator string) [][]string {
 }
 
 //вывести только строки с разделителем
-func PrintOnlySep(matr [][]string) {
+func FindOnlySep(matr [][]string) [][]string {
+	newmatr := [][]string{}
 	for _, str := range matr {
 		//если в срезе несколько элементов - есть разделитель
 		if len(str) > 1 {
-			fmt.Println(str)
+			newmatr = append(newmatr, str)
 		}
 	}
+	return newmatr
 }
 
 //вывод колонок
@@ -54,22 +56,6 @@ func PrintFlagf(matr [][]string, lst []int) {
 			fmt.Print(str[lst[i]] + "   ")
 		}
 		fmt.Println()
-	}
-}
-
-func myCut(strlist []string, separator string, flagf string, flags bool) {
-
-	//поддерржка флага d кастомный разделитель
-	matrix := CrmMatrix(strlist, separator)
-
-	//поддержка флага f выбор колонок (-f=0,1 text.txt)
-	if len(flagf) > 0 {
-		lst := StrFflagToIntList(flagf)
-		PrintFlagf(matrix, lst)
-	}
-	//поддрержка флага s вывод строки у которых есть разделитель
-	if flags == true {
-		PrintOnlySep(matrix)
 	}
 }
 
@@ -104,7 +90,22 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	//реализация флагов
-	myCut(strlist, separator, *flagf, *flags)
+
+	//поддерржка флага d кастомный разделитель
+	matrix := CrmMatrix(strlist, separator)
+
+	//поддержка флага f выбор колонок (-f=0,1 text.txt)
+	if len(*flagf) > 0 {
+		lst := StrFflagToIntList(*flagf)
+		PrintFlagf(matrix, lst)
+	}
+	//поддрержка флага s вывод строки у которых есть разделитель
+	if *flags == true {
+		//новая матрица
+		matrix = FindOnlySep(matrix)
+		for x := range matrix {
+			fmt.Print(x)
+		}
+	}
 
 }
