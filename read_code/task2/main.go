@@ -6,6 +6,7 @@ import "fmt"
 func test() (x int) { //возвращаем x
 	defer func() { //в стек вызовов
 		x++
+
 	}()
 	x = 1
 	return // 2

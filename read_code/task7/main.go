@@ -12,7 +12,7 @@ func asChan(vs ...int) <-chan int {
 	go func() {
 		for _, v := range vs {
 			c <- v
-			time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond) //
+			time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond)
 		}
 
 		close(c)
@@ -23,13 +23,7 @@ func asChan(vs ...int) <-chan int {
 func merge(a, b <-chan int) <-chan int {
 	c := make(chan int)
 	go func() {
-
-		//бесконечный цикл (каналы не закрыты, по дефолту 0)
 		for {
-			if a == nil && b == nil {
-				close(c)
-				break
-			}
 			select {
 			case v := <-a:
 				c <- v
@@ -46,7 +40,6 @@ func main() {
 	a := asChan(1, 3, 5, 7)
 	b := asChan(2, 4, 6, 8)
 	c := merge(a, b)
-
 	for v := range c {
 		fmt.Println(v)
 	}
