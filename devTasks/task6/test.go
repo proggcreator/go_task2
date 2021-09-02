@@ -42,29 +42,22 @@ func Test003(t *testing.T) {
 }
 
 func Test004(t *testing.T) {
-	separator := ","
-	strlist := []string{"a,d,f,g", "e,r,t,y", "f,v,b,n"}
-	flagf := "0,2"
-	flags := true
 
-	want := []int{1, 2, 3, 4, 5}
-	got := myCut(strlist, separator, flagf, flags)
+	strlist := [][]string{{"i", "want", "to"}, {"gain "}, {"a", "order"}}
+	want := [][]string{{"i", "want", "to"}, {"a", "order"}}
+	got := FindOnlySep(strlist)
 
 	if reflect.DeepEqual(want, got) {
 		t.Errorf("Got == %q, want %q", got, want)
 	}
 }
-
 func Test005(t *testing.T) {
-	separator := "   "
-	strlist := []string{"1   2   3", "4   5   6", "7   8   9"}
-	flagf := "100"
-	flags := true
 
-	want := "Error out of len"
-	_, got := myCut(strlist, separator, flagf, flags)
+	strlist := [][]string{{}}
+	want := [][]string{{}}
+	got := FindOnlySep(strlist)
 
-	if want != got {
+	if reflect.DeepEqual(want, got) {
 		t.Errorf("Got == %q, want %q", got, want)
 	}
 }
