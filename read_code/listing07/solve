@@ -1,0 +1,22 @@
+func main() {
+	for {
+		if a == nil && b == nil {
+			close(c)
+			break
+		}
+		select {
+		case v, ok := <-a: //closed or empty
+			if !ok {
+				a = nil
+				continue
+			}
+			c <- v
+		case v, ok := <-b: //closed or empty
+			if !ok {
+				b = nil
+				continue
+			}
+			c <- v
+		}
+	}
+}
