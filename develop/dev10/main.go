@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-myclient "github.com/proggcreator/go_task2/devTasks/task10/cmd"
+myclient "github.com/proggcreator/go_task2/develop/dev10/cmd"
 var (
 	host    string
 	port    int
